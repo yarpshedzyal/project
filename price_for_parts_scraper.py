@@ -2,38 +2,117 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 import time
+import re
 
-def web_scrape_price(url):
-    price = '0'
+def clean_price_string(price_str):
+    parts = price_str.split(".", 1)
+    if len(parts) == 2:
+        cleaned_price = f"{parts[0]}.{parts[1][:2]}"
+    else:
+        cleaned_price = price_str.replace(".", "")
+    cleaned_price = re.sub(r"[^\d.]", "", cleaned_price)
+    return cleaned_price
+
+def get_minimum_buy_number(soup):
+    min_must_text_element = soup.find("p", {"class": "min-must-text"})
+    if min_must_text_element:
+        minimum_buy_number = re.search(r"\d+", min_must_text_element.text)
+        if minimum_buy_number:
+            return int(minimum_buy_number.group())
+    return None
+
+def parser_solo(url):
     response = requests.get(url)
+    stock = "Out"
+    price = "0"
 
     if response.status_code == 200:
-    # Parse the HTML content of the page
-        soup = BeautifulSoup(response.text, 'html.parser')
-        print(response.text)
-        price_in_table_element = soup.select('#item-page > div > div:nth-child(2) > div > div.product-page > div > div:nth-child(3) > div:nth-child(1) > div > div')
-        if price_in_table_element:
-            print("Selected element text:", price_in_table_element[0].get_text())
+        soup = BeautifulSoup(response.content, "html.parser")
+        svg_element = soup.find("svg", {"class": "block mx-auto align-middle"})
+        phrase_unavailable = "This Product is no longer available"
+        phrase_unavailable_2 = "This product is no longer available"
+        phrase_out_of_stock = "Notify me when this product is back in stock"
+        phrase_works_with = 'Works With'
+        product_from_line = 'Other Products from this Line'
+        selector_for_sale = '#priceBox > div.pricing > p.sale-price > span.text-black.font-bold.bg-yellow-400.rounded-sm.antialiased.mr-1.mt-0\.5.px-3\/4.py-0\.5.text-sm'
+
+        if svg_element or (phrase_unavailable in soup.get_text()) or (phrase_out_of_stock in soup.get_text()) or (phrase_unavailable_2 in soup.get_text()):
+            stock = "Out"
         else:
-            print("No element found with the specified selector.")
+            stock = "In"
 
+        min_must_text_element = soup.find("p", {"class": "min-must-text"})
+        minimum_buy = get_minimum_buy_number(soup)
 
-def price_scrap():
-    df = pd.read_csv('SHELF_KIT_PARTS.csv') # read 
+        table_element = soup.select_one("table.table.table-bordered")
+        if table_element:
+            rows = table_element.select("tbody tr")
+            last_th = None
+            last_td = None
+            for row in rows:
+                th = row.select_one("th").text
+                td = row.select_one("td").text.strip()
+                last_th = th
+                last_td = td
 
-    def calculate_prices(row):
-        # You can implement your logic here to calculate prices based on the 'web' and 'the' fields
-        # For demonstration purposes, let's assume the price for 'web' and 'the' is twice the value in those fields
-        price_web = row['web'] * 2
-        price_the = row['the'] * 2
-        return price_web, price_the
+            if last_th and last_td:
+                filtered_td = re.sub(r'[^\d.]', '', last_td)
+                price = clean_price_string(filtered_td)
+            else:
+                return "Table has no rows or data."
 
-    # Apply the function to each row in the DataFrame
-    df['price_web'], df['price_the'] = zip(*df.apply(calculate_prices, axis=1))
+        else:
+            price_element = soup.select_one("#priceBox > div.pricing > p > span")
+            if price_element:
+                price = price_element.text.strip().replace("$", "").replace(",", "")
+                filtered_price = re.sub(r'[^\d.]', '', price)
+                price = clean_price_string(filtered_price)
+            # else:
+            #     return "Price element not found."
+            
+        if phrase_works_with in soup.get_text() and not table_element:
+            price_element = soup.select_one('#priceBox > div.pricing > p > span')
+            if price_element:
+                price = price_element.text.strip().replace("$", "").replace(",", "")
+                filtered_price = re.sub(r'[^\d.]', '', price)
+                price = clean_price_string(filtered_price)
+            # else:
+            #     return "Price element not found."
+        
+        sale_element = soup.select_one('#priceBox > div.pricing > p.sale-price > span.text-black.font-bold.bg-yellow-400.rounded-sm.antialiased.mr-1.mt-0\.5.px-3\/4.py-0\.5.text-sm')
+        if sale_element and not table_element:
+            price_element = soup.select_one('#priceBox > div.pricing > p.sale-price > span:nth-child(2)')
+            if price_element:
+                price = price_element.text.strip().replace("$", "").replace(",", "")
+                filtered_price = re.sub(r'[^\d.]', '', price)
+                price = clean_price_string(filtered_price)
+            # else:
+            #     return 'Price element not found'
+            
+        # if product_from_line in soup.get_text():
+        #     price_element = soup.select_one('#priceBox > div.pricing > p > span')
 
-    # Write the updated DataFrame back to the CSV file
-    df.to_csv('output_shelf_kit_parts.csv', index=False)
+        p_r_error_text = 'Contact us or '
+        if p_r_error_text in soup.get_text():
+            price_element = soup.select_one('#priceBox > div.pricing > div > p.leading-none.mb-0')
+            if price_element:
+                price = price_element.text.strip().replace("$", "").replace(",", "")
+                filtered_price = re.sub(r'[^\d.]', '', price)
+                price = clean_price_string(filtered_price)
+            # else:
+            #     return 'Price element not found'
+     
+        was_price_element = soup.select_one("p.was-price")
+        if was_price_element:
+            price = was_price_element.text.strip().replace("$", "").replace(",", "")
+            filtered_price = re.sub(r'[^\d.]', '', price)
+            price = clean_price_string(filtered_price)
+
+        if minimum_buy:
+            price = str(float(price) * minimum_buy)
+
+    return [price, stock]
 
         
 
-print(web_scrape_price('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html'))
+print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html'))
