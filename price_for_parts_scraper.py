@@ -136,11 +136,3 @@ for index, (row, prices, quantities) in enumerate(zip(df.iterrows(), scraped_pri
 
 # Write the new DataFrame to a new CSV file
 new_df.to_csv('output_shelf_kit_parts.csv', index=False)
-
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test1'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test2'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test3'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test4'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test5'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test6'))
-# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test7'))
