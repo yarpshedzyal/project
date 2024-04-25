@@ -51,8 +51,13 @@ def parser_solo(url):
             price_text = tag.get_text(strip=True)
             cleaned_price = clean_price_string(price_text)
             prices.append(cleaned_price)
-
-            # else:
+            td_tags = soup.find_all('td', class_='text-left')
+        for tag in td_tags:
+            price_text = tag.get_text(strip=True)
+            if re.match(r'\$\d+\.\d+', price_text):
+                cleaned_price = clean_price_string(price_text)
+                prices.append(cleaned_price)
+                # else:
             #     return 'Price element not found'
             
         # if product_from_line in soup.get_text():
