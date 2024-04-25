@@ -94,29 +94,35 @@ def parser_solo(url):
 
     return prices, quantities
 
-# df = pd.read_csv('SHELF_KIT_PARTS.csv')
+df = pd.read_csv('SHELF_KIT_PARTS.csv')
 
-# # Create empty lists to store scraped data
-# scraped_prices = []
-# scraped_stocks = []
+# Create empty lists to store scraped data
+scraped_prices = []
+scraped_stocks = []
 
-# # Iterate through each row in the DataFrame
-# for index, row in df.iterrows():
-#     # Extract the URL from the appropriate column in the row
-#     url = row['web']
+# Iterate through each row in the DataFrame
+for index, row in df.iterrows():
+    # Extract the URL from the appropriate column in the row
+    url = row['web']
     
-#     # Scrape data from the URL using the scrape_data function
-#     price, stock = parser_solo(url)
+    # Scrape data from the URL using the scrape_data function
+    price, quantities = parser_solo(url)
     
-#     # Append scraped data to the lists
-#     scraped_prices.append(price)
-#     scraped_stocks.append(stock)
+    # Append scraped data to the lists
+    scraped_prices.append(price)
+    scraped_stocks.append(quantities)
 
-# # Add scraped data to the DataFrame as new columns
-# df['scraped_price'] = scraped_prices
-# df['scraped_stock'] = scraped_stocks
+# Add scraped data to the DataFrame as new columns
+df['scraped_price'] = scraped_prices
+df['scraped_stock'] = scraped_stocks
 
-# # Write the updated DataFrame to a new CSV file
-# df.to_csv('output_shelf_kit_parts.csv', index=False)
+# Write the updated DataFrame to a new CSV file
+df.to_csv('output_shelf_kit_parts.csv', index=False)
 
-print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test1'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test2'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test3'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test4'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test5'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test6'))
+# print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test7'))
