@@ -66,14 +66,10 @@ def parser_solo(url):
                 # else:
             #     return 'Price element not found'
         label = price_box.find('label')
+        quantities = []
         if label:
-            buy_lots_match = re.search(r'(\d+)', label.get_text(strip=True))
-            if buy_lots_match:
-                quantity = int(buy_lots_match.group(1))
-            else:
-                quantity = None
-        else:
-            quantity = None    
+            buy_lots_match = re.findall(r'(\d+)', label.get_text(strip=True))
+            quantities = [int(quantity) for quantity in buy_lots_match]
         # if product_from_line in soup.get_text():
         #     price_element = soup.select_one('#priceBox > div.pricing > p > span')
 
@@ -96,7 +92,7 @@ def parser_solo(url):
         # if minimum_buy:
         #     price = str(float(price) * minimum_buy)
 
-    return prices, quantity
+    return prices, quantities
 
 # df = pd.read_csv('SHELF_KIT_PARTS.csv')
 
