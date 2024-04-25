@@ -45,47 +45,7 @@ def parser_solo(url):
         minimum_buy = get_minimum_buy_number(soup)
 
         table_element = soup.select_one("table.table.table-bordered")
-        if table_element:
-            rows = table_element.select("tbody tr")
-            last_th = None
-            last_td = None
-            for row in rows:
-                th = row.select_one("th").text
-                td = row.select_one("td").text.strip()
-                last_th = th
-                last_td = td
 
-            if last_th and last_td:
-                filtered_td = re.sub(r'[^\d.]', '', last_td)
-                price = clean_price_string(filtered_td)
-            else:
-                return "Table has no rows or data."
-
-        else:
-            price_element = soup.select_one("#priceBox > div.pricing > p > span")
-            if price_element:
-                price = price_element.text.strip().replace("$", "").replace(",", "")
-                filtered_price = re.sub(r'[^\d.]', '', price)
-                price = clean_price_string(filtered_price)
-            # else:
-            #     return "Price element not found."
-            
-        if phrase_works_with in soup.get_text() and not table_element:
-            price_element = soup.select_one('#priceBox > div.pricing > p > span')
-            if price_element:
-                price = price_element.text.strip().replace("$", "").replace(",", "")
-                filtered_price = re.sub(r'[^\d.]', '', price)
-                price = clean_price_string(filtered_price)
-            # else:
-            #     return "Price element not found."
-        
-        sale_element = soup.select_one('#priceBox > div.pricing > p.sale-price > span.text-black.font-bold.bg-yellow-400.rounded-sm.antialiased.mr-1.mt-0\.5.px-3\/4.py-0\.5.text-sm')
-        if sale_element and not table_element:
-            price_element = soup.select_one('#priceBox > div.pricing > p.sale-price > span:nth-child(2)')
-            if price_element:
-                price = price_element.text.strip().replace("$", "").replace(",", "")
-                filtered_price = re.sub(r'[^\d.]', '', price)
-                price = clean_price_string(filtered_price)
             # else:
             #     return 'Price element not found'
             
@@ -111,30 +71,31 @@ def parser_solo(url):
         if minimum_buy:
             price = str(float(price) * minimum_buy)
 
-    return [price, stock]
+    return [table_element]
 
-df = pd.read_csv('SHELF_KIT_PARTS.csv')
+# df = pd.read_csv('SHELF_KIT_PARTS.csv')
 
-# Create empty lists to store scraped data
-scraped_prices = []
-scraped_stocks = []
+# # Create empty lists to store scraped data
+# scraped_prices = []
+# scraped_stocks = []
 
-# Iterate through each row in the DataFrame
-for index, row in df.iterrows():
-    # Extract the URL from the appropriate column in the row
-    url = row['web']
+# # Iterate through each row in the DataFrame
+# for index, row in df.iterrows():
+#     # Extract the URL from the appropriate column in the row
+#     url = row['web']
     
-    # Scrape data from the URL using the scrape_data function
-    price, stock = parser_solo(url)
+#     # Scrape data from the URL using the scrape_data function
+#     price, stock = parser_solo(url)
     
-    # Append scraped data to the lists
-    scraped_prices.append(price)
-    scraped_stocks.append(stock)
+#     # Append scraped data to the lists
+#     scraped_prices.append(price)
+#     scraped_stocks.append(stock)
 
-# Add scraped data to the DataFrame as new columns
-df['scraped_price'] = scraped_prices
-df['scraped_stock'] = scraped_stocks
+# # Add scraped data to the DataFrame as new columns
+# df['scraped_price'] = scraped_prices
+# df['scraped_stock'] = scraped_stocks
 
-# Write the updated DataFrame to a new CSV file
-df.to_csv('output_shelf_kit_parts.csv', index=False)
+# # Write the updated DataFrame to a new CSV file
+# df.to_csv('output_shelf_kit_parts.csv', index=False)
 
+print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html'))
