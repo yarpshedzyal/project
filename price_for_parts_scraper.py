@@ -122,7 +122,7 @@ def parser_solo(url):
 # df.to_csv('output_shelf_kit_parts.csv', index=False)
 
 print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test1'))
-print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test2'))
+print(parser_solo('https://www.webstaurantstore.com/regency-36-x-72-nsf-green-epoxy-wire-shelf/460EG3672.html', 'test2 out'))
 print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test3'))
 print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test4'))
 print(parser_solo('https://www.webstaurantstore.com/regency-12-x-24-nsf-black-epoxy-wire-shelf/460EB1224.html', 'test5'))
