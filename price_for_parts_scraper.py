@@ -44,7 +44,7 @@ def parser_solo(url):
         min_must_text_element = soup.find("p", {"class": "min-must-text"})
         minimum_buy = get_minimum_buy_number(soup)
 
-        table_element = soup.select_one("table.table.table-bordered")
+        table_element = soup.select_one("#priceBox")
 
             # else:
             #     return 'Price element not found'
