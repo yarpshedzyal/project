@@ -45,13 +45,19 @@ def parser_solo(url):
         minimum_buy = get_minimum_buy_number(soup)
 
         table_element = soup.select_one("#priceBox")
-        price_tags = soup.find_all(class_='price')
+        price_box = soup.find(id='priceBox')
+        if not price_box:
+            return []  # No price box found, return empty list
+        
+        price_tags = price_box.find_all(class_='price')
         prices = []
         for tag in price_tags:
             price_text = tag.get_text(strip=True)
             cleaned_price = clean_price_string(price_text)
             prices.append(cleaned_price)
-            td_tags = soup.find_all('td', class_='text-left')
+        
+        # Find additional prices from <td> elements within the price box
+        td_tags = price_box.find_all('td', class_='text-left')
         for tag in td_tags:
             price_text = tag.get_text(strip=True)
             if re.match(r'\$\d+\.\d+', price_text):
