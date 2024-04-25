@@ -77,26 +77,26 @@ def parser_solo(url):
         # if product_from_line in soup.get_text():
         #     price_element = soup.select_one('#priceBox > div.pricing > p > span')
 
-        p_r_error_text = 'Contact us or '
-        if p_r_error_text in soup.get_text():
-            price_element = soup.select_one('#priceBox > div.pricing > div > p.leading-none.mb-0')
-            if price_element:
-                price = price_element.text.strip().replace("$", "").replace(",", "")
-                filtered_price = re.sub(r'[^\d.]', '', price)
-                price = clean_price_string(filtered_price)
-            # else:
-            #     return 'Price element not found'
+        # p_r_error_text = 'Contact us or '
+        # if p_r_error_text in soup.get_text():
+        #     price_element = soup.select_one('#priceBox > div.pricing > div > p.leading-none.mb-0')
+        #     if price_element:
+        #         price = price_element.text.strip().replace("$", "").replace(",", "")
+        #         filtered_price = re.sub(r'[^\d.]', '', price)
+        #         price = clean_price_string(filtered_price)
+        #     # else:
+        #     #     return 'Price element not found'
      
-        was_price_element = soup.select_one("p.was-price")
-        if was_price_element:
-            price = was_price_element.text.strip().replace("$", "").replace(",", "")
-            filtered_price = re.sub(r'[^\d.]', '', price)
-            price = clean_price_string(filtered_price)
+        # was_price_element = soup.select_one("p.was-price")
+        # if was_price_element:
+        #     price = was_price_element.text.strip().replace("$", "").replace(",", "")
+        #     filtered_price = re.sub(r'[^\d.]', '', price)
+        #     price = clean_price_string(filtered_price)
 
-        if minimum_buy:
-            price = str(float(price) * minimum_buy)
+        # if minimum_buy:
+        #     price = str(float(price) * minimum_buy)
 
-    return [prices]
+    return prices, quantity
 
 # df = pd.read_csv('SHELF_KIT_PARTS.csv')
 
