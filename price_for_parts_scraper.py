@@ -45,6 +45,12 @@ def parser_solo(url):
         minimum_buy = get_minimum_buy_number(soup)
 
         table_element = soup.select_one("#priceBox")
+        price_tags = soup.find_all(class_='price')
+        prices = []
+        for tag in price_tags:
+            price_text = tag.get_text(strip=True)
+            cleaned_price = clean_price_string(price_text)
+            prices.append(cleaned_price)
 
             # else:
             #     return 'Price element not found'
@@ -71,7 +77,7 @@ def parser_solo(url):
         if minimum_buy:
             price = str(float(price) * minimum_buy)
 
-    return [table_element]
+    return [prices]
 
 # df = pd.read_csv('SHELF_KIT_PARTS.csv')
 
