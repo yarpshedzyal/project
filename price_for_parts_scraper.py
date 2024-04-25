@@ -100,21 +100,23 @@ df = pd.read_csv('SHELF_KIT_PARTS.csv')
 scraped_prices = []
 scraped_stocks = []
 
-# Iterate through each row in the DataFrame
 for index, row in df.iterrows():
     # Extract the URL from the appropriate column in the row
     url = row['web']
     
     # Scrape data from the URL using the scrape_data function
-    price, quantities = parser_solo(url)
+    prices, quantities = parser_solo(url)
     
     # Append scraped data to the lists
-    scraped_prices.append(price)
-    scraped_stocks.append(quantities)
+    scraped_prices.extend(prices)
+    scraped_stocks.extend(quantities)
 
 # Add scraped data to the DataFrame as new columns
-df['scraped_price'] = scraped_prices
-df['scraped_stock'] = scraped_stocks
+for i, price in enumerate(scraped_prices, start=1):
+    df[f'price_{i}'] = price
+
+for i, stock in enumerate(scraped_stocks, start=1):
+    df[f'quantity_{i}'] = stock
 
 # Write the updated DataFrame to a new CSV file
 df.to_csv('output_shelf_kit_parts.csv', index=False)
